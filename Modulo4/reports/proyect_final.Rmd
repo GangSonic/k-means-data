@@ -1,0 +1,72 @@
+---
+title: "proyecto_final_ix"
+author: "JasminHR"
+date: "2025-07-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introducción 
+
+ En esta apgina realice un analisis de agrupamiento usando el dataset "iris" de R. 
+ 
+##Cargar paquetes 
+Verifica que tengas todos, si no es asi instala los faltantes. 
+
+```{r}
+library(rvest)        # Para scraping web
+library(dplyr)        # Para manipulación de datos
+library(tidyr)        # Para limpieza de datos
+library(purrr)        # Para mapear y manipular listas
+library(stringr)      # Para manipulación de texto
+library(factoextra)   # Para visualizar los clusters
+library(here)
+
+```
+
+## Cargar datos 
+
+```{r iris}
+View(iris)
+datos <- select(iris,c(1,2,3,4))
+```
+
+## Aplicar K-means
+Vamos a explicar cada linea: 
+1. Aplicamos k-means para agrupar las flores en 3 clusters
+2. Visualizaremos la distancia que tuvieron los centros 
+3. Se asignan los clousters a los datos
+
+```{r}
+set.seed(123)  # Para reproducibilidad
+kmeans_result <- kmeans(datos[, c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")], centers = 3)
+
+
+kmeans_result$centers
+
+
+datos$Cluster <- kmeans_result$cluster
+```
+
+
+## Visualizar Clousters 
+```{r}
+fviz_cluster(kmeans_result, data = datos[, c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")],
+             geom = "point", ellipse.type = "norm", 
+             main = "Visualización de K-means Clustering de Flores (Iris)")
+
+
+```
+
+## Guardado del data set final 
+```{r}
+write.csv(datos, here("data", "processed", "iris_clusterizado.csv"), row.names = FALSE)
+
+```
+
+
+
+
